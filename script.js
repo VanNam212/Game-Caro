@@ -4,8 +4,8 @@ for (let i = 0; i < 20; i++) {
     data += "<tr>";
     for (let j = 0; j < 20; j++) {
         data += "<td>";
-        // data += "<input type='button' style='width: 20px; height: 20px' id='square "+i+"-"+j+"' />";
-        data += "<input type='button' id='square" + i + "-" + j + "' onclick='setValue(i,j)'>";
+        data += "<input type='button' id='square" + i + "-" + j + "' onclick='setValue(" + i + "," + j + ")' />";
+        // data += "<button id='square" + i + "-" + j + "' onclick='setValue(" + i + "," + j + ")'></button>";
         data += "</td>";
     }
     data += "</tr>";
@@ -21,7 +21,7 @@ let array_o = [];
 
 function setValue(i, j) {
     let id_input = document.getElementById("square" + i + "-" + j + "");
-    if (check == true) {
+    if (check == true && id_input.value != "O") {
         id_input.value = "X";
         array_x[index_x++] = [i, j];
         if (index_x >= 5) {
@@ -40,18 +40,33 @@ function setValue(i, j) {
         }
         check = true;
     }
-    // for (let i = 0; i < 10; i++) {
-    //     data += "<br/>";
-    //     for (let j = 0; j < 10; j++) {
-    //         data += board[i][j] + "&nbsp;&nbsp;&nbsp;&nbsp;";
-    //     }
-    // }
-    // id_caro.innerHTML = data;
-
 }
 
 
 function winner(array) {
+    for (let i = 0; i < array.length - 1; i++) {
+        for (let j = i + 1; j < array.length; j++) {
+            // if (array[i][0] == array[j][0] && array[i][1] > array[j][1]) {
+            //     let temp = array[i][1];
+            //     array[i][1] = array[j][1];
+            //     array[j][1] = temp;
+            // } else if (array[i][1] == array[j][1] && array[i][0] > array[j][0]) {
+            //     let temp = array[i][0];
+            //     array[i][0] = array[j][0];
+            //     array[j][0] = temp;
+            // } else
+            if (array[i][1] > array[j][1] || array[i][0] > array[j][0]) {
+                let temp = array[i][0];
+                array[i][0] = array[j][0];
+                array[j][0] = temp;
+
+                let temp1 = array[i][1];
+                array[i][1] = array[j][1];
+                array[j][1] = temp1;
+            }
+        }
+    }
+
     for (let i = 0; i < array.length - 4; i++) {
         for (let j = i + 1; j < array.length - 3; j++) {
             for (let k = j + 1; k < array.length - 2; k++) {
