@@ -1,99 +1,134 @@
 let game = document.getElementById("caro");
-let data = '<table cellpadding="0" cellspacing="0">';
-for (let i = 0; i < 20; i++) {
+let data = '<table>';
+let board = [];
+let size = 20;
+let check = true;
+
+for (let i = 0; i < size; i++) {
     data += "<tr>";
-    for (let j = 0; j < 20; j++) {
+    board[i] = new Array(size);
+    for (let j = 0; j < size; j++) {
         data += "<td>";
         data += "<input type='button' id='square" + i + "-" + j + "' onclick='setValue(" + i + "," + j + ")' />";
         // data += "<button id='square" + i + "-" + j + "' onclick='setValue(" + i + "," + j + ")'></button>";
         data += "</td>";
+        board[i].push('.');
     }
     data += "</tr>";
 }
 data += "</table>";
 game.innerHTML = data;
 
-let check = true;
-let index_x = 0;
-let index_o = 0;
-let array_x = [];
-let array_o = [];
+
 
 function setValue(i, j) {
     let id_input = document.getElementById("square" + i + "-" + j + "");
-    if (check == true && id_input.value != "O") {
+    if (check == true && id_input.value != "O" && id_input.value != "X") {
         id_input.value = "X";
-        array_x[index_x++] = [i, j];
-        if (index_x >= 5) {
-            if (winner(array_x) == true) {
-                alert("X đã chiến thắng");
-            }
-        }
+        board[i][j] = "X";
         check = false;
-    } else {
-        id_input.value = "O";
-        array_o[index_o++] = [i, j];
-        if (index_o >= 5) {
-            if (winner(array_o) == true) {
-                alert("O đã chiến thắng");
-            }
+        if (KtraDoc(i, j, 'X') == true) {
+            alert("X đã chiến thắng");
+        } else if (KtraNgang(i, j, 'X') == true) {
+            alert("X đã chiến thắng");
+        } else if (KtraCheo1(i, j, 'X') == true) {
+            alert("X đã chiến thắng");
+        } else if (KtraCheo2(i, j, 'X') == true) {
+            alert("X đã chiến thắng");
         }
+    }
+    if (check == false && id_input.value != "O" && id_input.value != "X") {
+        id_input.value = "O";
+        board[i][j] = "O";
         check = true;
+        if (KtraDoc(i, j, 'O') == true) {
+            alert("O đã chiến thắng");
+        } else if (KtraNgang(i, j, 'O') == true) {
+            alert("O đã chiến thắng");
+        } else if (KtraCheo1(i, j, 'O') == true) {
+            alert("O đã chiến thắng");
+        } else if (KtraCheo2(i, j, 'O') == true) {
+            alert("O đã chiến thắng");
+        }
     }
 }
 
-
-function winner(array) {
-    for (let i = 0; i < array.length - 1; i++) {
-        for (let j = i + 1; j < array.length; j++) {
-            // if (array[i][0] == array[j][0] && array[i][1] > array[j][1]) {
-            //     let temp = array[i][1];
-            //     array[i][1] = array[j][1];
-            //     array[j][1] = temp;
-            // } else if (array[i][1] == array[j][1] && array[i][0] > array[j][0]) {
-            //     let temp = array[i][0];
-            //     array[i][0] = array[j][0];
-            //     array[j][0] = temp;
-            // } else
-            if (array[i][1] > array[j][1] || array[i][0] > array[j][0]) {
-                let temp = array[i][0];
-                array[i][0] = array[j][0];
-                array[j][0] = temp;
-
-                let temp1 = array[i][1];
-                array[i][1] = array[j][1];
-                array[j][1] = temp1;
-            }
-        }
+function KtraDoc(i, j, value) {
+    let y1 = i;
+    let y2 = i;
+    let count = 1;
+    while (y1 - 1 >= 0 && board[y1 - 1][j] == value) {
+        count++;
+        y1--;
     }
+    while (y2 + 1 <= size && board[y2 + 1][j] == value) {
+        count++;
+        y2++;
+    }
+    if (count == 5) {
+        return true;
+    }
+    return false;
+}
 
-    for (let i = 0; i < array.length - 4; i++) {
-        for (let j = i + 1; j < array.length - 3; j++) {
-            for (let k = j + 1; k < array.length - 2; k++) {
-                for (let l = k + 1; l < array.length - 1; l++) {
-                    for (let m = l + 1; m < array.length; m++) {
-                        if ((array[j][0] == (array[i][0] + array[k][0]) / 2) &&
-                            (array[k][0] == (array[j][0] + array[l][0]) / 2) &&
-                            (array[l][0] == (array[k][0] + array[m][0]) / 2) &&
-                            array[i][1] == array[j][1] == array[k][1] == array[l][1] == array[m][1]) {
-                            return true;
-                        } else if ((array[j][1] == (array[i][1] + array[k][1]) / 2) &&
-                            (array[k][1] == (array[j][1] + array[l][1]) / 2) &&
-                            (array[l][1] == (array[k][1] + array[m][1]) / 2) &&
-                            array[i][0] == array[j][0] == array[k][0] == array[l][0] == array[m][0]) {
-                            return true;
-                        } else if ((array[j][0] == (array[i][0] + array[k][0]) / 2) &&
-                            (array[k][0] == (array[j][0] + array[l][0]) / 2) &&
-                            (array[l][0] == (array[k][0] + array[m][0]) / 2) &&
-                            (array[j][1] == (array[i][1] + array[k][1]) / 2) &&
-                            (array[k][1] == (array[j][1] + array[l][1]) / 2) &&
-                            (array[l][1] == (array[k][1] + array[m][1]) / 2)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
+function KtraNgang(i, j, value) {
+    let x1 = j;
+    let x2 = j;
+    let count = 1;
+    while (x1 - 1 >= 0 && board[i][x1 - 1] == value) {
+        count++;
+        x1--;
+    }
+    while (x2 + 1 <= size && board[i][x2 + 1] == value) {
+        count++;
+        x2++;
+    }
+    if (count == 5) {
+        return true;
+    }
+    return false;
+}
+
+function KtraCheo1(i, j, value) {
+    let x1 = j;
+    let x2 = j;
+    let y1 = i;
+    let y2 = i;
+    let count = 1;
+    while (x1 - 1 >= 0 && y1 - 1 >= 0 && board[y1 - 1][x1 - 1] == value) {
+        count++;
+        x1--;
+        y1--;
+    }
+    while (x2 + 1 <= size && y2 + 1 <= size && board[y2 + 1][x2 + 1] == value) {
+        count++;
+        x2++;
+        y2++;
+    }
+    if (count == 5) {
+        return true;
+    }
+    return false;
+}
+
+function KtraCheo2(i, j, value) {
+    let x1 = j;
+    let x2 = j;
+    let y1 = i;
+    let y2 = i;
+    let count = 1;
+    while (x1 + 1 <= size && y1 - 1 >= 0 && board[y1 - 1][x1 + 1] == value) {
+        count++;
+        x1++;
+        y1--;
+    }
+    while (x2 - 1 >= 0 && y2 + 1 <= size && board[y2 + 1][x2 - 1] == value) {
+        count++;
+        x2--;
+        y2++;
+    }
+    if (count == 5) {
+        return true;
     }
     return false;
 }
